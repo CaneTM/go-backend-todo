@@ -1,3 +1,5 @@
+-- Code taken from https://go.dev/doc/tutorial/database-access
+
 DROP TABLE IF EXISTS album;
 
 CREATE TABLE album (
