@@ -10,12 +10,6 @@ const (
 	BadRequestMsg             = "Bad request"
 	InternalServerErrorMsg    = "Internal server error"
 	FailedToCreateResponseMsg = "Failed to create a response"
-
-	// Media types
-	ApplicationJSON = "application/json"
-
-	// Header types
-	ContentType = "Content-Type"
 )
 
 type ResponseError struct {
