@@ -2,9 +2,15 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 
 	"github.com/canetm/go-backend-todo/services"
+)
+
+const (
+	// Patterns
+	usernamePattern = "username"
 )
 
 type userHandler struct {
@@ -22,7 +28,7 @@ func NewUserHandler(db *sql.DB) *userHandler {
 func (uh *userHandler) HandleService() {
 	svcRoot := uh.svc.GetServiceName()
 	http.HandleFunc(svcRoot, uh.handleUsers)
-	http.HandleFunc(svcRoot+"/{username}", uh.handleUsersUsername)
+	http.HandleFunc(fmt.Sprintf("%s/{%s}", svcRoot, usernamePattern), uh.handleUsersUsername)
 }
 
 func (uh *userHandler) handleUsers(w http.ResponseWriter, r *http.Request) {
@@ -35,10 +41,11 @@ func (uh *userHandler) handleUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (uh *userHandler) handleUsersUsername(w http.ResponseWriter, r *http.Request) {
-	// switch r.Method {
+	username := r.PathValue(usernamePattern)
+	switch r.Method {
 	// case http.MethodGet:
 	// 	uh.userService.GetUserByUsername(w, r, uh.db)
-	// case http.MethodDelete:
-	// 	uh.userService.DeleteUser(w, r, uh.db)
-	// }
+	case http.MethodDelete:
+		uh.svc.DeleteUser(w, r, uh.db, username)
+	}
 }

@@ -13,6 +13,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// TODO maybe make a repository class?
 type UserService struct {
 	serviceName string
 }
@@ -126,6 +127,30 @@ func (us *UserService) CreateUser(w http.ResponseWriter, r *http.Request, db *sq
 	resp, _ := json.Marshal(fmt.Sprintf("User %s created", u.Username))
 	w.Header().Set(common.ContentType, common.ApplicationJSON)
 	w.WriteHeader(http.StatusCreated)
+	w.Write(resp)
+}
+
+// Deletes the user with the given username
+func (us *UserService) DeleteUser(w http.ResponseWriter, r *http.Request, db *sql.DB, username string) {
+	var userToDelete string
+	row := db.QueryRow("SELECT username FROM users WHERE username = ?", username)
+	if err := row.Scan(&userToDelete); err != nil {
+		if err == sql.ErrNoRows || userToDelete == "" {
+			re := common.NewResponseError(http.StatusNotFound, fmt.Sprintf("User %s does not exist", username))
+			re.WriteError(w)
+			return
+		}
+	}
+
+	_, err := db.Exec("DELETE FROM users WHERE username = ?", username)
+	if err != nil {
+		re := common.NewResponseError(http.StatusInternalServerError, fmt.Sprintf("Could not delete user %s", username))
+		re.WriteError(w)
+		return
+	}
+
+	resp, _ := json.Marshal(fmt.Sprintf("User %s deleted", username))
+	w.Header().Set(common.ContentType, common.ApplicationJSON)
 	w.Write(resp)
 }
 
