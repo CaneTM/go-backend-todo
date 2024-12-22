@@ -7,12 +7,14 @@ import (
 	"net/http"
 
 	"github.com/canetm/go-backend-todo/common"
+	"github.com/canetm/go-backend-todo/handlers"
 	"github.com/go-sql-driver/mysql"
 )
 
 func main() {
 	db := connectDB()
 	addHandlers(db)
+	fmt.Printf("Server listening on http://localhost%s\n", common.Port)
 	http.ListenAndServe(common.Port, nil)
 }
 
@@ -37,12 +39,12 @@ func connectDB() *sql.DB {
 		log.Fatal(pingErr)
 	}
 
-	fmt.Println("Connected to database!")
+	fmt.Printf("Connected to %s database\n", cfg.DBName)
 	return db
 }
 
 func addHandlers(db *sql.DB) {
-
+	handlers.NewUserHandler(db).HandleService()
 }
 
 
