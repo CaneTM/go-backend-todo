@@ -16,13 +16,13 @@ const (
 
 type taskHandler struct {
 	db  *sql.DB
-	svc *services.TaskService //#to be implemented
+	svc *services.TaskService
 }
 
 func NewTaskHandler(db *sql.DB) *taskHandler {
 	return &taskHandler{
 		db:  db,
-		svc: services.NewTaskService(), //to be implemented
+		svc: services.NewTaskService(),
 	}
 }
 
@@ -44,11 +44,15 @@ func (th *taskHandler) handleTasks(w http.ResponseWriter, r *http.Request) {
 func (th *taskHandler) handleTasksByTaskName(w http.ResponseWriter, r *http.Request) {
 	taskName := r.URL.Query().Get(taskPattern)
 	switch r.Method {
-	case http.MethodGet:
-		th.svc.GetTaskByName(w, r, th.db, taskName)
+	//Not sure if this first case needs to be implemented, since it was ignored for users as well
+	// case http.MethodGet:
+	// 	th.svc.GetTaskByTitle(w, r, th.db, taskName)
+
 	case http.MethodDelete:
 		th.svc.DeleteTask(w, r, th.db, taskName)
-	case http.MethodPut:
-		th.svc.UpdateTask(w, r, th.db, taskName)
+
+		// Could implement to make a dynamic task
+		// case http.MethodPut:
+		// 	th.svc.UpdateTask(w, r, th.db, taskName)
 	}
 }
