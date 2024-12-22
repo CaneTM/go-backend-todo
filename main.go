@@ -44,3 +44,6 @@ func connectDB() *sql.DB {
 func addHandlers(db *sql.DB) {
 
 }
+
+
+//Robert was here 
