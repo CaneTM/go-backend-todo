@@ -130,6 +130,26 @@ func (us *UserService) CreateUser(w http.ResponseWriter, r *http.Request, db *sq
 	w.Write(resp)
 }
 
+// Gets the user with the given username
+func (us *UserService) GetUserByUsername(w http.ResponseWriter, r *http.Request, db *sql.DB, username string) {
+	var u reps.User
+	row := db.QueryRow("SELECT * FROM users WHERE username = ?", username)
+	if err := row.Scan(&u); err != nil {
+		var re *common.ResponseError
+		if err == sql.ErrNoRows {
+			re = common.NewResponseError(http.StatusNotFound, fmt.Sprintf("User %s does not exist", username))
+		} else {
+			re = common.NewResponseError(http.StatusInternalServerError, err.Error())
+		}
+		re.WriteError(w)
+		return
+	}
+
+	resp, _ := json.Marshal(u)
+	w.Header().Set(common.ContentType, common.ApplicationJSON)
+	w.Write(resp)
+}
+
 // Deletes the user with the given username
 func (us *UserService) DeleteUser(w http.ResponseWriter, r *http.Request, db *sql.DB, username string) {
 	var userToDelete string

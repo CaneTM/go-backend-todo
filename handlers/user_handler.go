@@ -43,8 +43,8 @@ func (uh *userHandler) handleUsers(w http.ResponseWriter, r *http.Request) {
 func (uh *userHandler) handleUsersUsername(w http.ResponseWriter, r *http.Request) {
 	username := r.PathValue(usernamePattern)
 	switch r.Method {
-	// case http.MethodGet:
-	// 	uh.userService.GetUserByUsername(w, r, uh.db)
+	case http.MethodGet:
+		uh.svc.GetUserByUsername(w, r, uh.db, username)
 	case http.MethodDelete:
 		uh.svc.DeleteUser(w, r, uh.db, username)
 	}
